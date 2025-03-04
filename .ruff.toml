@@ -1,0 +1,24 @@
+# Enable all error (E) and format (F) rules
+select = ["E", "F"]
+
+# Line length of 100 characters
+line-length = 100
+
+# Exclude directories
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "build",
+    "dist",
+]
+
+# Assume Python 3.10
+target-version = "py310"
+
+# Allow autofix for all enabled rules (when `--fix`) is provided
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$" 
