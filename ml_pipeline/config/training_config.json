@@ -1,0 +1,35 @@
+{
+  "data_path": "data/dataset.csv",
+  "model_config": {
+    "type": "logistic_regression",
+    "params": {
+      "C": 1.0,
+      "max_iter": 1000
+    }
+  },
+  "preprocessing_config": {
+    "target_column": "completed_filing",
+    "feature_columns": null,
+    "test_size": 0.2,
+    "stratify": true,
+    "use_preprocessing_pipeline": true,
+    "numerical_columns": [
+      "age", 
+      "income", 
+      "time_spent_on_platform", 
+      "number_of_sessions", 
+      "fields_filled_percentage", 
+      "previous_year_filing"
+    ],
+    "categorical_columns": [
+      "employment_type", 
+      "marital_status", 
+      "device_type", 
+      "referral_source"
+    ]
+  },
+  "storage_config": {
+    "output_dir": "output/models",
+    "model_path": "output/models/tax_filing_classifier.joblib"
+  }
+}
