@@ -83,7 +83,7 @@ def load_and_split_data(
     
     # Second split: create validation set from training data if requested
     if validation_size is not None:
-        # Adjust validation size relative to the remaining training data
+        # Adpotejust validation size relative to the remaining training data
         adjusted_val_size = validation_size / (1 - test_size)
         train_df, val_df = train_test_split(
             train_df, test_size=adjusted_val_size, random_state=random_state
