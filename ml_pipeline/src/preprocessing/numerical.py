@@ -4,7 +4,7 @@ This module provides functionality to preprocess numerical features
 using standard scaling techniques.
 """
 
-from typing import List, Optional
+from typing import List, Dict
 import pandas as pd
 import joblib
 from pathlib import Path
@@ -26,8 +26,9 @@ class NumericalPreprocessor:
             numerical_columns: List of column names containing numerical features
         """
         self.numerical_columns = numerical_columns
-        self.means: Optional[dict] = None
-        self.stds: Optional[dict] = None
+        self.means: Dict[str, float] = {}
+        self.stds: Dict[str, float] = {}
+        self.fitted = False
 
     def fit(self, df: pd.DataFrame) -> None:
         """
@@ -36,9 +37,6 @@ class NumericalPreprocessor:
         Args:
             df: DataFrame containing the numerical columns to fit
         """
-        self.means = {}
-        self.stds = {}
-
         for col in self.numerical_columns:
             if col not in df.columns:
                 raise ValueError(f"Column '{col}' not found in the DataFrame")
@@ -50,6 +48,8 @@ class NumericalPreprocessor:
             if self.stds[col] == 0:
                 self.stds[col] = 1.0
 
+        self.fitted = True
+
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Apply scaling to data.
@@ -60,7 +60,7 @@ class NumericalPreprocessor:
         Returns:
             DataFrame with transformed numerical features
         """
-        if self.means is None or self.stds is None:
+        if not self.fitted:
             raise ValueError("Preprocessor has not been fitted. Call fit() first.")
 
         result = df.copy()
