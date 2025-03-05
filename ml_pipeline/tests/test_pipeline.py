@@ -97,8 +97,6 @@ def test_fit(sample_data):
 
 def test_transform_onehot(sample_data):
 
-    #TODO: Fix test
-
     """Test transforming data with one-hot encoding."""
     pipeline = PreprocessingPipeline()
     pipeline.fit(sample_data)
