@@ -4,7 +4,6 @@ Data loading utilities for the ML pipeline.
 """
 
 import logging
-import os
 from pathlib import Path
 from typing import Optional
 
@@ -93,4 +92,4 @@ def load_and_split_data(
         return train_df, test_df, val_df
     
     logger.info(f"Data split into {len(train_df)} training and {len(test_df)} test samples")
-    return train_df, test_df, None 
+    return train_df, test_df, None
