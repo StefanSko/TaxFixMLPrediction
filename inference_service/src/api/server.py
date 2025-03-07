@@ -15,10 +15,38 @@ from fastapi.responses import JSONResponse
 
 from api.routes import router
 from core.config import get_settings
+from core.errors import add_exception_handlers
+from core.models import generate_request_id
 from services.model_loader import initialize_model_loader, start_update_checker
 from utils.logging import configure_logging
 
 logger = logging.getLogger(__name__)
+
+
+async def request_id_middleware(request: Request, call_next: Callable) -> Response:
+    """
+    Middleware to add request ID to each request.
+
+    Args:
+        request: FastAPI request
+        call_next: Next middleware or route handler
+
+    Returns:
+        Response from the next middleware or route handler
+    """
+    # Generate request ID
+    request_id = generate_request_id()
+    
+    # Store request ID in request state
+    request.state.request_id = request_id
+    
+    # Process the request
+    response = await call_next(request)
+    
+    # Add request ID to response headers
+    response.headers["X-Request-ID"] = str(request_id)
+    
+    return response
 
 
 def create_app(config_path: Optional[str] = None) -> FastAPI:
@@ -70,17 +98,11 @@ def create_app(config_path: Optional[str] = None) -> FastAPI:
         allow_headers=settings.CORS_HEADERS,
     )
 
-    # Add error handling middleware
-    @app.middleware("http")
-    async def error_handling_middleware(request: Request, call_next: Callable) -> Response:
-        try:
-            return await call_next(request)
-        except Exception as e:
-            logger.exception(f"Unhandled exception: {str(e)}")
-            return JSONResponse(
-                status_code=500,
-                content={"detail": "Internal server error"}
-            )
+    # Add request ID middleware
+    app.middleware("http")(request_id_middleware)
+
+    # Add exception handlers
+    add_exception_handlers(app)
 
     # Add startup and shutdown events
     @app.on_event("startup")
