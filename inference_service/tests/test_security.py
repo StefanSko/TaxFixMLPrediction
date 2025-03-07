@@ -7,7 +7,7 @@ from fastapi import FastAPI, Depends
 from fastapi.testclient import TestClient
 
 from core.security import get_api_key, validate_api_key, api_key_auth
-from core.config import Settings, get_settings
+from core.config import Settings
 
 
 @pytest.fixture
