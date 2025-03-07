@@ -1,0 +1,28 @@
+# API Settings
+API_TITLE: "Taxfix Completion Prediction API"
+API_DESCRIPTION: "API for predicting whether a user will complete their tax filing"
+API_VERSION: "0.1.0"
+HOST: "0.0.0.0"
+PORT: 8000
+DEBUG: false
+
+# CORS Settings
+CORS_ORIGINS:
+  - "http://localhost:3000"
+  - "https://app.taxfix.com"
+CORS_HEADERS:
+  - "Content-Type"
+  - "Authorization"
+  - "X-API-Key"
+
+# Model Settings
+MODEL_PATH: "output/models/tax_filing_classifier.joblib"
+PREPROCESSOR_PATH: "output/models/preprocessor.joblib"
+
+# Authentication Settings
+API_KEY: null  # Set this in production
+API_KEY_HEADER: "X-API-Key"
+
+# Logging Settings
+LOG_LEVEL: "INFO"
+LOG_FILE: "logs/inference_service.log"
