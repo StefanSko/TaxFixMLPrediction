@@ -4,7 +4,7 @@ API routes for the inference service.
 This module defines the API endpoints for the inference service.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Request, status
 
 from core.config import settings
 

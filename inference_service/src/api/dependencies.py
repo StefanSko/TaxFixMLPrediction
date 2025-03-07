@@ -4,7 +4,7 @@ Dependency injection for the API routes.
 This module provides dependencies that can be injected into API route handlers.
 """
 
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import HTTPException, Request, status
 
 from services.model_service import ModelService
 
