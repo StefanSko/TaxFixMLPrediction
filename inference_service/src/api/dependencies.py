@@ -6,7 +6,7 @@ This module provides dependencies that can be injected into API route handlers.
 
 from fastapi import Depends, HTTPException, Request, status
 
-from inference_service.services.model_service import ModelService
+from services.model_service import ModelService
 
 
 async def get_model_service(request: Request) -> ModelService:

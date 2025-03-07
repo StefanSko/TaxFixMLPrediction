@@ -8,7 +8,7 @@ for running the inference service.
 import argparse
 import logging
 
-from inference_service.api.server import create_app, run_server
+from api.server import create_app, run_server
 
 # Parse command line arguments
 def parse_args():

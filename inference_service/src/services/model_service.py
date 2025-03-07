@@ -6,9 +6,8 @@ This module provides functionality for loading and using ML models for predictio
 
 import joblib
 import logging
-import numpy as np
 import pandas as pd
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
 
