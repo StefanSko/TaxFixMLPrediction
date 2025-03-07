@@ -68,57 +68,57 @@ class PredictionRequest(BaseModel):
         ge=18,
         le=100,
         description="User's age in years",
-        example=35
+        examples=[35]
     )
     income: float = Field(
         ...,
         gt=0,
         description="User's annual income",
-        example=50000.0
+        examples=[50000.0]
     )
     employment_type: EmploymentType = Field(
         ...,
         description="User's employment status",
-        example=EmploymentType.EMPLOYED
+        examples=[EmploymentType.EMPLOYED]
     )
     marital_status: MaritalStatus = Field(
         ...,
         description="User's marital status",
-        example=MaritalStatus.MARRIED
+        examples=[MaritalStatus.MARRIED]
     )
     time_spent_on_platform: float = Field(
         ...,
         gt=0,
         description="Time spent on platform in minutes",
-        example=45.5
+        examples=[45.5]
     )
     number_of_sessions: int = Field(
         ...,
         gt=0,
         description="Number of sessions on the platform",
-        example=3
+        examples=[3]
     )
     fields_filled_percentage: float = Field(
         ...,
         ge=0,
         le=100,
         description="Percentage of form fields completed",
-        example=75.0
+        examples=[75.0]
     )
     previous_year_filing: bool = Field(
         ...,
         description="Whether the user filed taxes last year",
-        example=True
+        examples=[True]
     )
     device_type: DeviceType = Field(
         ...,
         description="Type of device used",
-        example=DeviceType.MOBILE
+        examples=[DeviceType.MOBILE]
     )
     referral_source: ReferralSource = Field(
         ...,
         description="How the user was referred to the platform",
-        example=ReferralSource.SEARCH
+        examples=[ReferralSource.SEARCH]
     )
 
     class Config:
@@ -148,14 +148,14 @@ class PredictionResponse(BaseModel):
     prediction: bool = Field(
         ...,
         description="Prediction of whether the user will complete filing",
-        example=True
+        examples=[True]
     )
     completion_probability: float = Field(
         ...,
         ge=0,
         le=1,
         description="Probability of completion",
-        example=0.85
+        examples=[0.85]
     )
     request_id: uuid.UUID = Field(
         default_factory=generate_request_id,
@@ -208,12 +208,12 @@ class ErrorResponse(BaseModel):
     error_code: ErrorCode = Field(
         ...,
         description="Error code",
-        example=ErrorCode.VALIDATION_ERROR
+        examples=[ErrorCode.VALIDATION_ERROR]
     )
     message: str = Field(
         ...,
         description="Error message",
-        example="Invalid input data"
+        examples=["Invalid input data"]
     )
     request_id: Optional[uuid.UUID] = Field(
         None,
