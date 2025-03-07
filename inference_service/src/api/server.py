@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 
 from api.routes import router
 from core.config import get_settings
-from services.model_service import ModelService
+from services.model_loader import initialize_model_loader, start_update_checker
 from utils.logging import configure_logging
 
 logger = logging.getLogger(__name__)
@@ -88,17 +88,27 @@ def create_app(config_path: Optional[str] = None) -> FastAPI:
         """Initialize resources on startup."""
         logger.info("Starting inference service")
 
-        # Initialize model service
+        # Initialize model loader
         try:
-            model_service = ModelService(
-                model_path=settings.MODEL_PATH,
-                preprocessor_path=settings.PREPROCESSOR_PATH
-            )
-            # Store model service in app state for dependency injection
-            app.state.model_service = model_service
-            logger.info("Model and preprocessor loaded successfully")
+            config = {
+                'MODEL_PATH': settings.MODEL_PATH,
+                'PREPROCESSOR_PATH': settings.PREPROCESSOR_PATH,
+                # Add metadata path if available in settings
+                'METADATA_PATH': getattr(settings, 'METADATA_PATH', None)
+            }
+            
+            model_loader = initialize_model_loader(config)
+            
+            # Store model loader in app state for dependency injection
+            app.state.model_loader = model_loader
+            
+            # Start background thread to check for model updates
+            update_interval = getattr(settings, 'MODEL_UPDATE_INTERVAL', 300)  # Default: 5 minutes
+            app.state.update_thread = start_update_checker(model_loader, update_interval)
+            
+            logger.info("Model loader initialized successfully")
         except Exception as e:
-            logger.error(f"Failed to load model: {str(e)}")
+            logger.error(f"Failed to initialize model loader: {str(e)}")
             # Continue running even if model loading fails
             # This allows the health endpoint to report the issue
 
@@ -106,6 +116,7 @@ def create_app(config_path: Optional[str] = None) -> FastAPI:
     async def shutdown_event() -> None:
         """Clean up resources on shutdown."""
         logger.info("Shutting down inference service")
+        # No need to explicitly stop the update thread as it's a daemon thread
 
     # Include routers
     app.include_router(router)
