@@ -6,6 +6,7 @@ This module defines the API endpoints for making predictions.
 
 import logging
 import time
+import json
 from typing import Dict, Any
 
 from fastapi import APIRouter, Depends, Request, status
@@ -42,6 +43,19 @@ router = APIRouter(
 )
 
 logger = logging.getLogger(__name__)
+
+
+# Custom JSON encoder to handle UUID and datetime objects
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        import uuid
+        from datetime import datetime
+        
+        if isinstance(obj, uuid.UUID):
+            return str(obj)
+        elif isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
 
 
 @router.post(
@@ -125,10 +139,17 @@ async def predict(
             request_id=request_id
         )
         
+        # Convert to dict and manually serialize UUID
+        error_dict = error_response.dict()
+        if error_dict["request_id"]:
+            error_dict["request_id"] = str(error_dict["request_id"])
+        if error_dict["timestamp"]:
+            error_dict["timestamp"] = error_dict["timestamp"].isoformat()
+        
         # Return error response
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content=error_response.dict()
+            content=error_dict
         )
     except Exception as e:
         # Log unexpected error
@@ -141,10 +162,17 @@ async def predict(
             request_id=request_id
         )
         
+        # Convert to dict and manually serialize UUID
+        error_dict = error_response.dict()
+        if error_dict["request_id"]:
+            error_dict["request_id"] = str(error_dict["request_id"])
+        if error_dict["timestamp"]:
+            error_dict["timestamp"] = error_dict["timestamp"].isoformat()
+        
         # Return error response
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content=error_response.dict()
+            content=error_dict
         )
 
 
