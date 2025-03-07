@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Model inference service package"
 authors = ["Stefan Skoruppa <Stefan.sko@gmail.com>"]
 readme = "README.md"
-packages = [{include = "inference_service"}]
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
