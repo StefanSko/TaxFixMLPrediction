@@ -1,20 +1,25 @@
 """
-API routes for the inference service.
+Health check endpoints for the inference API.
 
-This module defines the API endpoints for the inference service.
+This module defines the API endpoints for health checking.
 """
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Request, status
 
 from core.config import settings
-from api.dependencies import ensure_prediction_service
-from api.routes.prediction import router as prediction_router
 
-# Create a router for the API endpoints
-router = APIRouter()
+# Create a router for health check endpoints
+router = APIRouter(
+    tags=["health"]
+)
 
 
-@router.get("/health", status_code=status.HTTP_200_OK)
+@router.get(
+    "/health",
+    status_code=status.HTTP_200_OK,
+    summary="Health check",
+    description="Check the health status of the service"
+)
 async def health_check(request: Request) -> dict:
     """
     Health check endpoint.
@@ -49,7 +54,3 @@ async def health_check(request: Request) -> dict:
         "model_loaded": model_loaded,
         "preprocessor_loaded": preprocessor_loaded
     }
-
-
-# Include the prediction router
-router.include_router(prediction_router)
