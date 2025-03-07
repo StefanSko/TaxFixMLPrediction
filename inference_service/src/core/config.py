@@ -5,6 +5,7 @@ This module provides YAML-based configuration using Pydantic's BaseSettings.
 """
 
 import os
+import secrets
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -39,10 +40,26 @@ class Settings(BaseSettings):
         default="output/models/preprocessor.joblib",
         env="PREPROCESSOR_PATH"
     )
+    METADATA_PATH: Optional[str] = Field(
+        default=None,
+        env="METADATA_PATH"
+    )
+    MODEL_UPDATE_INTERVAL: int = Field(
+        default=300,  # 5 minutes
+        env="MODEL_UPDATE_INTERVAL"
+    )
 
     # Authentication Settings
-    API_KEY: Optional[str] = Field(default=None, env="API_KEY")
-    API_KEY_HEADER: str = Field(default="X-API-Key", env="API_KEY_HEADER")
+    API_KEY: Optional[str] = Field(
+        default=None,
+        env="API_KEY",
+        description="API key for authentication. If not set, API key authentication is disabled."
+    )
+    API_KEY_HEADER: str = Field(
+        default="X-API-Key",
+        env="API_KEY_HEADER",
+        description="HTTP header name for API key"
+    )
 
     # Logging Settings
     LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
@@ -57,11 +74,20 @@ class Settings(BaseSettings):
             print(f"Warning: Path {path} does not exist")
         return v
 
+    @validator("API_KEY")
+    def generate_default_api_key_if_debug(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[str]:
+        """Generate a default API key if in debug mode and no API key is provided."""
+        if v is None and values.get("DEBUG", False):
+            # Generate a random API key for development
+            return f"dev-{secrets.token_hex(16)}"
+        return v
+
     class Config:
-        """Pydantic config for the Settings class."""
+        """Pydantic configuration."""
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+        extra = "ignore"
 
 
 def load_yaml_config(config_path: str) -> Dict[str, Any]:

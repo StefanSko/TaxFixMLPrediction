@@ -19,6 +19,7 @@ from core.models import (
     ErrorCode,
     generate_request_id
 )
+from core.security import api_key_auth
 from services.predictor import get_prediction_service, PredictionService
 from api.dependencies import ensure_prediction_service
 
@@ -27,6 +28,10 @@ router = APIRouter(
     prefix="/api/v1",
     tags=["prediction"],
     responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            "model": ErrorResponse,
+            "description": "Authentication failed"
+        },
         status.HTTP_422_UNPROCESSABLE_ENTITY: {
             "model": ErrorResponse,
             "description": "Validation or prediction error"
@@ -64,7 +69,7 @@ class CustomJSONEncoder(json.JSONEncoder):
     status_code=status.HTTP_200_OK,
     summary="Make a prediction",
     description="Predict whether a user will complete their tax filing based on user data",
-    dependencies=[Depends(ensure_prediction_service)]
+    dependencies=[Depends(ensure_prediction_service), api_key_auth]
 )
 async def predict(
     request: Request,
@@ -180,7 +185,8 @@ async def predict(
     "/batch-predict",
     status_code=status.HTTP_501_NOT_IMPLEMENTED,
     summary="Batch prediction (not implemented)",
-    description="This endpoint will support batch predictions in the future"
+    description="This endpoint will support batch predictions in the future",
+    dependencies=[api_key_auth]
 )
 async def batch_predict() -> Dict[str, Any]:
     """
